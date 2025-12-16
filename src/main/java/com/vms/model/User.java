@@ -1,26 +1,9 @@
 package com.vms.model;
-
 public class User {
-    public enum Role {
-        ADMIN, VOLUNTEER, STUDENT
-    }
-
     private int id;
     private String username;
     private String password;
-    private Role role;
-    private String email;
-
-    public User() {
-    }
-
-    public User(int id, String username, String password, Role role, String email) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.email = email;
-    }
+    private String role;
 
     public int getId() {
         return id;
@@ -46,19 +29,11 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
