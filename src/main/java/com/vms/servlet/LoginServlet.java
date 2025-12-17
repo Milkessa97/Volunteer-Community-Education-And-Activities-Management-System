@@ -1,50 +1,51 @@
 package com.vms.servlet;
 
+import com.vms.dao.UserDAO;
+import com.vms.model.User;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.ServletException;
-
 import java.io.IOException;
-
-import com.vms.dao.UserDAO;
-import com.vms.model.User;
-
-import org.mindrot.jbcrypt.BCrypt;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userParam = request.getParameter("username");
+        String passParam = request.getParameter("password");
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        resp.setContentType("text/plain");
-
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-
+        UserDAO dao = new UserDAO();
         try {
-            UserDAO dao = new UserDAO();
-            User user = dao.findByUsername(username);
+            User user = dao.findByUsername(userParam);
 
-            if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-                HttpSession session = req.getSession(true);
+            // Plain text comparison logic
+            if (user != null && user.getPassword().equals(passParam)) {
+                // Store user in session
+                HttpSession session = request.getSession();
                 session.setAttribute("user", user);
 
-                resp.setStatus(HttpServletResponse.SC_OK);
-                resp.getWriter().write("Login successful");
+                // Redirect based on role
+                switch (user.getRole().toUpperCase()) {
+                    case "ADMIN":
+                        response.sendRedirect("admin/dashboard.jsp");
+                        break;
+                    case "VOLUNTEER":
+                        response.sendRedirect("volunteer/dashboard.jsp");
+                        break;
+                    case "STUDENT":
+                        response.sendRedirect("student/dashboard.jsp");
+                        break;
+                    default:
+                        response.sendRedirect("login.jsp?error=invalid_role");
+                }
             } else {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write("Invalid credentials");
+                response.sendRedirect("login.jsp?error=invalid_credentials");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("Server error");
+            response.sendRedirect("login.jsp?error=server_error");
         }
     }
 }
