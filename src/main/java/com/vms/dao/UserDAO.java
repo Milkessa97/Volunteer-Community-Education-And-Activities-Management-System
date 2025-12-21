@@ -13,7 +13,7 @@ public class UserDAO {
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     User u = new User();
-                    u.setId(rs.getInt("id"));
+                    u.setId(rs.getInt("user_id"));
                     u.setUsername(rs.getString("username"));
                     u.setPassword(rs.getString("password"));
                     u.setRole(rs.getString("role"));

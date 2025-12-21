@@ -1,6 +1,7 @@
 com\vms\dao\UserDAO.class
 com\vms\servlet\LoginServlet.class
 com\vms\model\User.class
+com\vms\servlet\StudentServlet.class
 com\vms\util\DBUtil.class
 com\vms\filter\AuthFilter.class
 com\vms\servlet\AuthServlet.class
