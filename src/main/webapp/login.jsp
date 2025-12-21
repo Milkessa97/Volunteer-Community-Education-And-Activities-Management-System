@@ -20,24 +20,6 @@
             <p class="text-slate-500 mt-2">Volunteer Lecture Management System</p>
         </div>
 
-        <div class="mb-6">
-            <label class="block text-sm font-semibold text-slate-700 mb-3">Select Role</label>
-            <div class="grid grid-cols-3 gap-3">
-                <button type="button" onclick="selectRole('STUDENT', this)" class="role-btn p-4 rounded-xl border-2 border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-center">
-                    <svg class="mx-auto mb-2 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
-                    <span class="text-xs font-bold text-slate-600">Student</span>
-                </button>
-                <button type="button" onclick="selectRole('VOLUNTEER', this)" class="role-btn p-4 rounded-xl border-2 border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-center">
-                    <svg class="mx-auto mb-2 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                    <span class="text-xs font-bold text-slate-600">Volunteer</span>
-                </button>
-                <button type="button" onclick="selectRole('ADMIN', this)" class="role-btn p-4 rounded-xl border-2 border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-center">
-                    <svg class="mx-auto mb-2 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span class="text-xs font-bold text-slate-600">Admin</span>
-                </button>
-            </div>
-        </div>
-
         <% if (request.getParameter("error") != null) { %>
             <div class="mb-4 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
                 Invalid credentials or session expired.
