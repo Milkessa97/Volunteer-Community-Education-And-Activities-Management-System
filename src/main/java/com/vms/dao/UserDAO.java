@@ -16,7 +16,7 @@ public class UserDAO {
         try (Connection conn = getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword()); // hash in real app
+            ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getRole().name());
             return ps.executeUpdate() > 0;
@@ -25,8 +25,6 @@ public class UserDAO {
         }
         return false;
     }
-
-    // ✅ Add this method
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = getConnection();
