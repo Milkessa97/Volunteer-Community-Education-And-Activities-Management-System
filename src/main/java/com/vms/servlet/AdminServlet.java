@@ -100,3 +100,60 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 }
+@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    if (!isAdmin(request)) {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+    }
+
+    User admin = (User) request.getSession().getAttribute("currentUser");
+    String action = request.getParameter("action");
+    String redirectUrl = "admin?action=dashboard";
+
+    try {
+        switch (action) {
+            case "createEvent":
+                Event event = new Event();
+                populateEventData(request, event);
+                event.setCreatedBy(admin.getUserId());
+                adminDAO.createEvent(event);
+                redirectUrl = "admin?action=listEvents";
+                break;
+
+            case "approveLecture":
+                long lectureId = Long.parseLong(request.getParameter("lectureId"));
+                adminDAO.approveLecture(lectureId, admin.getUserId());
+                redirectUrl = "admin?action=pendingLectures";
+                break;
+
+            case "postAnnouncement":
+                Announcement ann = new Announcement();
+                ann.setTitle(request.getParameter("title"));
+                ann.setContent(request.getParameter("content"));
+                ann.setEventDate(Date.valueOf(request.getParameter("eventDate")));
+                ann.setLocation(request.getParameter("location"));
+                ann.setPostedBy(admin.getUserId());
+                adminDAO.postAnnouncement(ann);
+                redirectUrl = "admin?action=listAnnouncements";
+                break;
+
+            case "moveWaitlist":
+                long wlId = Long.parseLong(request.getParameter("waitlistId"));
+                long userId = Long.parseLong(request.getParameter("userId"));
+                long evId = Long.parseLong(request.getParameter("eventId"));
+                adminDAO.moveFromWaitlistToRegistration(wlId, evId, userId);
+                redirectUrl = "admin?action=viewWaitlist&eventId=" + evId;
+                break;
+        }
+        response.sendRedirect(redirectUrl);
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        request.setAttribute("errorMessage", "Database Error: " + ex.getMessage());
+        request.getRequestDispatcher("error.jsp").forward(request, response);
+    }
+}
+
