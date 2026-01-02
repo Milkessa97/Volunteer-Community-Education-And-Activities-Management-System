@@ -346,9 +346,8 @@ public class AdminDAO {
             conn = DBUtil.getConnection();
             conn.setAutoCommit(false);
 
-            String insertSql =
-                "INSERT INTO event_registrations (event_id, user_id, registration_status) " +
-                "VALUES (?, ?, 'CONFIRMED')";
+            String insertSql = "INSERT INTO event_registrations (event_id, user_id, registration_status) " +
+                    "VALUES (?, ?, 'CONFIRMED')";
             try (PreparedStatement psInsert = conn.prepareStatement(insertSql)) {
                 psInsert.setLong(1, eventId);
                 psInsert.setLong(2, userId);
@@ -363,7 +362,8 @@ public class AdminDAO {
 
             conn.commit();
         } catch (SQLException e) {
-            if (conn != null) conn.rollback();
+            if (conn != null)
+                conn.rollback();
             throw e;
         } finally {
             if (conn != null) {
@@ -376,14 +376,13 @@ public class AdminDAO {
     // ---------- EVENT MANAGEMENT ----------
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        String sql =
-            "SELECT e.*, u.full_name FROM events e " +
-            "JOIN users u ON e.created_by = u.user_id " +
-            "ORDER BY e.event_date DESC";
+        String sql = "SELECT e.*, u.full_name FROM events e " +
+                "JOIN users u ON e.created_by = u.user_id " +
+                "ORDER BY e.event_date DESC";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Event e = new Event();
@@ -407,13 +406,12 @@ public class AdminDAO {
 
     public List<EventWaitlist> getWaitlist(long eventId) {
         List<EventWaitlist> list = new ArrayList<>();
-        String sql =
-            "SELECT w.*, u.full_name FROM event_waitlist w " +
-            "JOIN users u ON w.user_id = u.user_id " +
-            "WHERE w.event_id = ? ORDER BY w.position";
+        String sql = "SELECT w.*, u.full_name FROM event_waitlist w " +
+                "JOIN users u ON w.user_id = u.user_id " +
+                "WHERE w.event_id = ? ORDER BY w.position";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setLong(1, eventId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -433,12 +431,11 @@ public class AdminDAO {
     }
 
     public void createEvent(Event event) throws SQLException {
-        String sql =
-            "INSERT INTO events (title, description, event_date, start_time, end_time, " +
-            "location, capacity, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO events (title, description, event_date, start_time, end_time, " +
+                "location, capacity, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, event.getTitle());
             ps.setString(2, event.getDescription());
@@ -452,4 +449,71 @@ public class AdminDAO {
             ps.executeUpdate();
         }
     }
+
+}
+
+    // ---------- DASHBOARD ----------
+    public int countUpcomingLectures() {
+        String sql = "SELECT COUNT(*) FROM lectures WHERE status = 'pending'";
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countCompletedSessions() {
+        String sql = "SELECT COUNT(*) FROM lectures WHERE status = 'approved'";
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countTotalAttendees() {
+        String sql = "SELECT COUNT(*) FROM lecture_registrations";
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // ---------- LECTURES ----------
+public List<Lecture> getAllLectures() {
+    List<Lecture> lectures = new ArrayList<>();
+    String sql =
+        "SELECT l.*, u.full_name FROM lectures l " +
+        "LEFT JOIN users u ON l.volunteer_id = u.user_id " +
+        "ORDER BY l.lecture_date DESC";
+
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Lecture l = new Lecture();
+            l.setLectureId(rs.getLong("lecture_id"));
+            l.setTitle(rs.getString("title"));
+            l.setLectureDate(rs.getDate("lecture_date"));
+            l.setInstructor(rs.getString("full_name"));
+            lectures.add(l);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return lectures;
 }
