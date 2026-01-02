@@ -493,27 +493,68 @@ public class AdminDAO {
     }
 
     // ---------- LECTURES ----------
-public List<Lecture> getAllLectures() {
-    List<Lecture> lectures = new ArrayList<>();
+    public List<Lecture> getAllLectures() {
+        List<Lecture> lectures = new ArrayList<>();
+        String sql = "SELECT l.*, u.full_name FROM lectures l " +
+                "LEFT JOIN users u ON l.volunteer_id = u.user_id " +
+                "ORDER BY l.lecture_date DESC";
+
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Lecture l = new Lecture();
+                l.setLectureId(rs.getLong("lecture_id"));
+                l.setTitle(rs.getString("title"));
+                l.setLectureDate(rs.getDate("lecture_date"));
+                l.setInstructor(rs.getString("full_name"));
+                lectures.add(l);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lectures;
+    }
+
+    // ---------- USERS ----------
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT u.*, r.role_name FROM users u " +
+                "JOIN roles r ON u.role_id = r.role_id";
+
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getLong("user_id"));
+                u.setFullName(rs.getString("full_name"));
+                u.setUsername(rs.getString("username"));
+                u.setRoleId(rs.getLong("role_id"));
+                users.add(u);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    // ---------- ANNOUNCEMENTS ----------
+public void postAnnouncement(Announcement ann) throws SQLException {
     String sql =
-        "SELECT l.*, u.full_name FROM lectures l " +
-        "LEFT JOIN users u ON l.volunteer_id = u.user_id " +
-        "ORDER BY l.lecture_date DESC";
+        "INSERT INTO announcements (title, content, event_date, location, posted_by) " +
+        "VALUES (?, ?, ?, ?, ?)";
 
     try (Connection conn = DBUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        while (rs.next()) {
-            Lecture l = new Lecture();
-            l.setLectureId(rs.getLong("lecture_id"));
-            l.setTitle(rs.getString("title"));
-            l.setLectureDate(rs.getDate("lecture_date"));
-            l.setInstructor(rs.getString("full_name"));
-            lectures.add(l);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        ps.setString(1, ann.getTitle());
+        ps.setString(2, ann.getContent());
+        ps.setDate(3, ann.getEventDate());
+        ps.setString(4, ann.getLocation());
+        ps.setLong(5, ann.getPostedBy());
+        ps.executeUpdate();
     }
-    return lectures;
 }
