@@ -156,4 +156,14 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 }
+private void populateEventData(HttpServletRequest request, Event e) {
+    e.setTitle(request.getParameter("title"));
+    e.setDescription(request.getParameter("description"));
+    e.setEventDate(Date.valueOf(request.getParameter("eventDate")));
+    e.setStartTime(Time.valueOf(request.getParameter("startTime") + ":00"));
+    e.setEndTime(Time.valueOf(request.getParameter("endTime") + ":00"));
+    e.setLocation(request.getParameter("location"));
+    e.setCapacity(Integer.parseInt(request.getParameter("capacity")));
+    e.setStatus(request.getParameter("status"));
+}
 
