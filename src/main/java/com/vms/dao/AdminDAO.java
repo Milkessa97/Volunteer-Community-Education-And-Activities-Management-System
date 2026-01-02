@@ -329,3 +329,127 @@ public class AdminDAO {
         return false;
     }
 }
+package com.vms.dao;
+
+import com.vms.model.*;
+import com.vms.util.DBUtil;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminDAO {
+
+    // ---------- WAITLIST TRANSACTION ----------
+    public void moveFromWaitlistToRegistration(long waitlistId, long eventId, long userId) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
+
+            String insertSql =
+                "INSERT INTO event_registrations (event_id, user_id, registration_status) " +
+                "VALUES (?, ?, 'CONFIRMED')";
+            try (PreparedStatement psInsert = conn.prepareStatement(insertSql)) {
+                psInsert.setLong(1, eventId);
+                psInsert.setLong(2, userId);
+                psInsert.executeUpdate();
+            }
+
+            String deleteSql = "DELETE FROM event_waitlist WHERE waitlist_id = ?";
+            try (PreparedStatement psDelete = conn.prepareStatement(deleteSql)) {
+                psDelete.setLong(1, waitlistId);
+                psDelete.executeUpdate();
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            if (conn != null) conn.rollback();
+            throw e;
+        } finally {
+            if (conn != null) {
+                conn.setAutoCommit(true);
+                conn.close();
+            }
+        }
+    }
+
+    // ---------- EVENT MANAGEMENT ----------
+    public List<Event> getAllEvents() {
+        List<Event> events = new ArrayList<>();
+        String sql =
+            "SELECT e.*, u.full_name FROM events e " +
+            "JOIN users u ON e.created_by = u.user_id " +
+            "ORDER BY e.event_date DESC";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Event e = new Event();
+                e.setEventId(rs.getInt("event_id"));
+                e.setTitle(rs.getString("title"));
+                e.setDescription(rs.getString("description"));
+                e.setEventDate(rs.getDate("event_date"));
+                e.setStartTime(rs.getTime("start_time"));
+                e.setEndTime(rs.getTime("end_time"));
+                e.setLocation(rs.getString("location"));
+                e.setCapacity(rs.getInt("capacity"));
+                e.setStatus(rs.getString("status"));
+                e.setCreatedBy(rs.getInt("created_by"));
+                events.add(e);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return events;
+    }
+
+    public List<EventWaitlist> getWaitlist(long eventId) {
+        List<EventWaitlist> list = new ArrayList<>();
+        String sql =
+            "SELECT w.*, u.full_name FROM event_waitlist w " +
+            "JOIN users u ON w.user_id = u.user_id " +
+            "WHERE w.event_id = ? ORDER BY w.position";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    EventWaitlist ew = new EventWaitlist();
+                    ew.setWaitlistId(rs.getLong("waitlist_id"));
+                    ew.setEventId(rs.getLong("event_id"));
+                    ew.setUserId(rs.getLong("user_id"));
+                    ew.setPosition(rs.getInt("position"));
+                    list.add(ew);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void createEvent(Event event) throws SQLException {
+        String sql =
+            "INSERT INTO events (title, description, event_date, start_time, end_time, " +
+            "location, capacity, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, event.getTitle());
+            ps.setString(2, event.getDescription());
+            ps.setDate(3, event.getEventDate());
+            ps.setTime(4, event.getStartTime());
+            ps.setTime(5, event.getEndTime());
+            ps.setString(6, event.getLocation());
+            ps.setInt(7, event.getCapacity());
+            ps.setString(8, event.getStatus());
+            ps.setLong(9, event.getCreatedBy());
+            ps.executeUpdate();
+        }
+    }
+}
