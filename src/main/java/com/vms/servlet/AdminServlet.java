@@ -30,3 +30,73 @@ public class AdminServlet extends HttpServlet {
         return user != null && user.getRoleId() == 1;
     }
 }
+@Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    if (!isAdmin(request)) {
+        response.sendRedirect("login.jsp?error=unauthorized");
+        return;
+    }
+
+    String action = request.getParameter("action");
+    if (action == null) action = "dashboard";
+
+    try {
+        switch (action) {
+            case "dashboard":
+                int upcoming = adminDAO.countUpcomingLectures();
+                Lecture popular = adminDAO.getMostPopularLecture();
+                int completed = adminDAO.countCompletedSessions();
+                int totalAttendees = adminDAO.countTotalAttendees();
+                double averageAttendees = adminDAO.getAverageAttendeesPerLecture();
+
+                request.setAttribute("upcomingCount", upcoming);
+                request.setAttribute("popularLecture", popular);
+                request.setAttribute("completed", completed);
+                request.setAttribute("totalAttendees", totalAttendees);
+                request.setAttribute("averageAttendees", averageAttendees);
+
+                request.getRequestDispatcher("admin-dashboard.jsp").forward(request, response);
+                break;
+
+            case "lectures":
+                List<Lecture> lectureList = adminDAO.getAllLectures();
+                request.setAttribute("lectures", lectureList);
+                request.getRequestDispatcher("manage-lectures.jsp").forward(request, response);
+                break;
+
+            case "listUsers":
+                List<User> users = adminDAO.getAllUsers();
+                request.setAttribute("users", users);
+                request.getRequestDispatcher("admin-users.jsp").forward(request, response);
+                break;
+
+            case "listEvents":
+                List<Event> events = adminDAO.getAllEvents();
+                request.setAttribute("events", events);
+                request.getRequestDispatcher("admin-events.jsp").forward(request, response);
+                break;
+
+            case "pendingLectures":
+                List<Lecture> lectures = adminDAO.getPendingLectures();
+                request.setAttribute("lectures", lectures);
+                request.getRequestDispatcher("admin-lectures.jsp").forward(request, response);
+                break;
+
+            case "viewWaitlist":
+                long eventId = Long.parseLong(request.getParameter("eventId"));
+                List<EventWaitlist> waitlist = adminDAO.getWaitlist(eventId);
+                request.setAttribute("waitlist", waitlist);
+                request.getRequestDispatcher("admin-waitlist.jsp").forward(request, response);
+                break;
+
+            default:
+                response.sendRedirect("admin?action=dashboard");
+                break;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+}
