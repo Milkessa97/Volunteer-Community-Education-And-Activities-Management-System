@@ -7,15 +7,13 @@ import java.util.List;
 
 public class AdminDAO {
 
-    // --- DB connection ---
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/your_db_name", "username", "password");
     }
 
-    // --- 1️⃣ Admin management ---
     public boolean createAdmin(User admin) {
-        admin.setRole(User.Role.ADMIN); // ensure role is ADMIN
+        admin.setRole(User.Role.ADMIN);
         String sql = "INSERT INTO users (full_name, email, password, role_id) " +
                 "VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -24,7 +22,7 @@ public class AdminDAO {
             ps.setString(1, admin.getUsername());
             ps.setString(2, admin.getEmail());
             ps.setString(3, admin.getPassword());
-            ps.setInt(4, 1); // assuming role_id=1 is ADMIN in roles table
+            ps.setInt(4, 1);
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -71,7 +69,6 @@ public class AdminDAO {
         return false;
     }
 
-    // --- 2️⃣ Event CRUD ---
     public boolean createEvent(Event event) {
         String sql = "INSERT INTO events (title, description, event_date, start_time, end_time, location, capacity, status, created_by) "
                 +
@@ -160,7 +157,6 @@ public class AdminDAO {
         return false;
     }
 
-    // --- 3️⃣ Lecture approval ---
     public List<Lecture> getPendingLectures() {
         List<Lecture> lectures = new ArrayList<>();
         String sql = "SELECT * FROM lectures WHERE status!='Approved'";
@@ -204,7 +200,6 @@ public class AdminDAO {
         return false;
     }
 
-    // --- 4️⃣ Announcements ---
     public boolean postAnnouncement(Announcement ann) {
         String sql = "INSERT INTO announcements (title, content, event_date, location, posted_by) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -247,7 +242,6 @@ public class AdminDAO {
         return list;
     }
 
-    // --- 5️⃣ Event Registrations ---
     public List<EventRegistration> getEventRegistrations(int eventId) {
         List<EventRegistration> list = new ArrayList<>();
         String sql = "SELECT * FROM event_registrations WHERE event_id=?";
@@ -272,7 +266,6 @@ public class AdminDAO {
         return list;
     }
 
-    // --- 6️⃣ Waitlist Management ---
     public List<EventWaitlist> getWaitlist(int eventId) {
         List<EventWaitlist> list = new ArrayList<>();
         String sql = "SELECT * FROM event_waitlist WHERE event_id=? ORDER BY position";
@@ -310,11 +303,9 @@ public class AdminDAO {
     }
 
     public boolean moveFromWaitlistToRegistration(int waitlistId, int eventId, int userId) {
-        // Remove from waitlist
         if (!removeFromWaitlist(waitlistId))
             return false;
 
-        // Add to registration
         String sql = "INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)";
         try (Connection conn = getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -339,7 +330,6 @@ import java.util.List;
 
 public class AdminDAO {
 
-    // ---------- WAITLIST TRANSACTION ----------
     public void moveFromWaitlistToRegistration(long waitlistId, long eventId, long userId) throws SQLException {
         Connection conn = null;
         try {
@@ -373,7 +363,6 @@ public class AdminDAO {
         }
     }
 
-    // ---------- EVENT MANAGEMENT ----------
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
         String sql = "SELECT e.*, u.full_name FROM events e " +
@@ -452,7 +441,6 @@ public class AdminDAO {
 
 }
 
-    // ---------- DASHBOARD ----------
     public int countUpcomingLectures() {
         String sql = "SELECT COUNT(*) FROM lectures WHERE status = 'pending'";
         try (Connection conn = DBUtil.getConnection();
@@ -492,7 +480,6 @@ public class AdminDAO {
         return 0;
     }
 
-    // ---------- LECTURES ----------
     public List<Lecture> getAllLectures() {
         List<Lecture> lectures = new ArrayList<>();
         String sql = "SELECT l.*, u.full_name FROM lectures l " +
@@ -517,7 +504,6 @@ public class AdminDAO {
         return lectures;
     }
 
-    // ---------- USERS ----------
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT u.*, r.role_name FROM users u " +
@@ -541,7 +527,6 @@ public class AdminDAO {
         return users;
     }
 
-    // ---------- ANNOUNCEMENTS ----------
 public void postAnnouncement(Announcement ann) throws SQLException {
     String sql =
         "INSERT INTO announcements (title, content, event_date, location, posted_by) " +
