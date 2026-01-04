@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: eyobb
-  Date: 12/31/2025
-  Time: 11:43 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -110,7 +103,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
                     </div>
                 </div>
-                <a href="student?action=dashboard" class="flex items-center justify-center bg-blue-600 text-white h-12 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md">
+                <a href="student?action=lectures" class="flex items-center justify-center bg-blue-600 text-white h-12 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md">
                     View Available Lectures
                 </a>
             </div>
