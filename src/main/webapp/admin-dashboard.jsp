@@ -20,7 +20,6 @@
                     </svg>
                     <h1 class="text-xl font-bold tracking-tight">Community Service <span class="text-blue-600 font-medium text-sm ml-2 px-2 py-1 bg-blue-50 rounded-full">Admin</span></h1>
                 </div>
-
                 <div class="flex items-center gap-4">
                     <div class="text-right hidden sm:block">
                         <p class="text-sm font-semibold">
@@ -41,7 +40,6 @@
                 </div>
             </div>
         </header>
-
         <main class="container mx-auto px-4 py-8 max-w-6xl">
             <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -52,7 +50,6 @@
                     + Create New Lecture
                 </a>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                 <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
@@ -65,7 +62,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
                         <div class="space-y-1">
@@ -77,7 +73,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
                         <div class="space-y-1">
@@ -89,7 +84,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
                         <div class="space-y-1">
@@ -102,7 +96,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-all group">
                     <div class="flex items-start justify-between mb-6">
@@ -118,7 +111,6 @@
                         View Lectures
                     </a>
                 </div>
-
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-all group overflow-hidden relative">
                     <div class="flex items-start justify-between mb-6 relative z-10">
                         <div>
@@ -135,6 +127,5 @@
             </div>
         </main>
     </div>
-
 </body>
 </html>
