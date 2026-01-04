@@ -1,14 +1,23 @@
 package com.vms.servlet;
 
-import com.vms.dao.AdminDAO;
-import com.vms.model.*;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-import jakarta.servlet.*;
+
+import com.vms.dao.AdminDAO;
+import com.vms.model.Announcement;
+import com.vms.model.Event;
+import com.vms.model.EventWaitlist;
+import com.vms.model.Lecture;
+import com.vms.model.User;
+
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
@@ -17,7 +26,7 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     public void init() {
-        // In a real app, inject the connection or use a DataSource
+     
         adminDAO = new AdminDAO();
     }
 
@@ -26,7 +35,7 @@ public class AdminServlet extends HttpServlet {
         if (session == null)
             return false;
         User user = (User) session.getAttribute("currentUser");
-        // Assuming role_id 1 is Admin in your 'roles' table
+        
         return user != null && user.getRoleId() == 1;
     }
 
@@ -46,13 +55,11 @@ public class AdminServlet extends HttpServlet {
         try {
             switch (action) {
                 case "dashboard":
-                    // Fetch the summary data your JSP expects
                     int upcoming = adminDAO.countUpcomingLectures();
                     Lecture popular = adminDAO.getMostPopularLecture();
                     int completed = adminDAO.countCompletedSessions();
                     int totalAttendees = adminDAO.countTotalAttendees();
                     double averageAttendees = adminDAO.getAverageAttendeesPerLecture();
-                    // Pass it to the JSP
                     request.setAttribute("upcomingCount", upcoming);
                     request.setAttribute("popularLecture", popular);
                     request.setAttribute("completed", completed);
@@ -62,7 +69,7 @@ public class AdminServlet extends HttpServlet {
                     request.getRequestDispatcher("admin-dashboard.jsp").forward(request, response);
                     break;
 
-                case "lectures": // This maps to your "Manage Lectures" page
+                case "lectures":
                     List<Lecture> lectureList = adminDAO.getAllLectures();
                     request.setAttribute("lectures", lectureList);
                     request.getRequestDispatcher("manage-lectures.jsp").forward(request, response);
@@ -81,8 +88,7 @@ public class AdminServlet extends HttpServlet {
 
                 case "pendingLectures":
                     List<Lecture> pendingLectures = adminDAO.getPendingLectures();
-                    request.setAttribute("lectures", pendingLectures); // Reusing the same attribute name 'lectures' for
-                                                                       // the shared JSP
+                    request.setAttribute("lectures", pendingLectures);
                     request.getRequestDispatcher("manage-lectures.jsp").forward(request, response);
                     break;
 
@@ -94,14 +100,12 @@ public class AdminServlet extends HttpServlet {
                     break;
 
                 case "createLecturePage":
-                    // Load volunteers for the dropdown and forward to create lecture form
                     List<User> volunteers = adminDAO.getVolunteers();
                     request.setAttribute("volunteers", volunteers);
                     request.getRequestDispatcher("create-lecture.jsp").forward(request, response);
                     break;
 
                 case "editLecture":
-                    // Load lecture by ID for editing
                     long lectureId = Long.parseLong(request.getParameter("id"));
                     Lecture lectureToEdit = adminDAO.getLectureById(lectureId);
                     List<User> volunteersForEdit = adminDAO.getVolunteers();
@@ -146,7 +150,6 @@ public class AdminServlet extends HttpServlet {
                 case "approveLecture":
                     long lectureId = Long.parseLong(request.getParameter("lectureId"));
                     adminDAO.approveLecture(lectureId, admin.getUserId());
-                    // Redirect back to the main list so they can see it updated to APPROVED
                     redirectUrl = "admin?action=lectures";
                     break;
 
@@ -170,7 +173,6 @@ public class AdminServlet extends HttpServlet {
                     break;
 
                 case "createLecture":
-                    // Create new lecture from form data
                     Lecture newLecture = new Lecture();
                     newLecture.setTitle(request.getParameter("title"));
                     newLecture.setDescription(request.getParameter("description"));
@@ -183,7 +185,6 @@ public class AdminServlet extends HttpServlet {
                     break;
 
                 case "deleteLecture":
-                    // Delete lecture by ID
                     long lectureIdToDelete = Long.parseLong(request.getParameter("id"));
                     adminDAO.deleteLecture(lectureIdToDelete);
                     redirectUrl = "admin?action=lectures";
