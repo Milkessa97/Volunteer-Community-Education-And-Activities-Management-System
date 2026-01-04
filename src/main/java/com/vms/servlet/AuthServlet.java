@@ -27,10 +27,10 @@ public class AuthServlet extends HttpServlet {
             return;
         }
 
-        // 2. Get the User object from session
+        // Get the User object from session
         com.vms.model.User user = (com.vms.model.User) session.getAttribute("user");
 
-        // 3. Output JSON using the object's getters
+        // Output JSON using the object's getters
         resp.getWriter().write(
                 String.format("{ \"username\": \"%s\", \"role\": \"%s\" }",
                         user.getUsername(),

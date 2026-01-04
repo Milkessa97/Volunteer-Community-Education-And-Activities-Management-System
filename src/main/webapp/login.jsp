@@ -43,8 +43,6 @@
                 Sign In
             </button>
         </form>
-
-        <p class="text-center text-xs text-slate-400 mt-6 uppercase tracking-widest">Demo Prototype - VMS 2025</p>
     </div>
 
     <script>

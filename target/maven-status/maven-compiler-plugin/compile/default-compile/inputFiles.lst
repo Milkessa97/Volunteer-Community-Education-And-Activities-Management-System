@@ -1,5 +1,13 @@
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\dao\AdminDAO.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\dao\StudentDAO.java
 C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\dao\UserDAO.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\dao\VolunteerDAO.java
 C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\filter\AuthFilter.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\Announcement.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\Event.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\EventRegistration.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\EventWaitlist.java
+C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\Lecture.java
 C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\model\User.java
 C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\servlet\AdminServlet.java
 C:\Users\Papa\OneDrive\Documents\AP Project\src\main\java\com\vms\servlet\AuthServlet.java

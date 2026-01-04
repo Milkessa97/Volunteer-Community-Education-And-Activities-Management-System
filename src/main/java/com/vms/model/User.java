@@ -1,16 +1,40 @@
 package com.vms.model;
+
 public class User {
-    private int id;
+    private int userId;
+    private String fullName;
     private String username;
     private String password;
-    private String role;
+    private long roleId;
 
-    public int getId() {
-        return id;
+    public enum Role {
+        ADMIN, VOLUNTEER, STUDENT
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Role getRole() {
+        // Mapping based on your roles table: 1=Admin, 2=Volunteer, 3=Student
+        if (this.roleId == 1) return Role.ADMIN;
+        if (this.roleId == 2) return Role.VOLUNTEER;
+        return Role.STUDENT;
+    }
+    // Constructors, Getters, and Setters
+    public User() {}
+
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getUsername() {
@@ -29,11 +53,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public long getRoleId() {
+        return roleId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
     }
 }
