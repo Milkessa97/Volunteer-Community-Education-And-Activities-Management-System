@@ -80,10 +80,9 @@ public class AdminServlet extends HttpServlet {
                     break;
 
                 case "pendingLectures":
-                    List<Lecture> pendingLectures = adminDAO.getPendingLectures();
-                    request.setAttribute("lectures", pendingLectures); // Reusing the same attribute name 'lectures' for
-                                                                       // the shared JSP
-                    request.getRequestDispatcher("manage-lectures.jsp").forward(request, response);
+                    List<Lecture> lectures = adminDAO.getPendingLectures();
+                    request.setAttribute("lectures", lectures);
+                    request.getRequestDispatcher("admin-lectures.jsp").forward(request, response);
                     break;
 
                 case "viewWaitlist":
@@ -146,8 +145,7 @@ public class AdminServlet extends HttpServlet {
                 case "approveLecture":
                     long lectureId = Long.parseLong(request.getParameter("lectureId"));
                     adminDAO.approveLecture(lectureId, admin.getUserId());
-                    // Redirect back to the main list so they can see it updated to APPROVED
-                    redirectUrl = "admin?action=lectures";
+                    redirectUrl = "admin?action=pendingLectures";
                     break;
 
                 case "postAnnouncement":
