@@ -325,40 +325,42 @@ public class AdminDAO {
         }
     }
 
-    public List<User> getVolunteers() {
-        List<User> volunteers = new ArrayList<>();
-        String sql = "SELECT user_id, full_name, username FROM users WHERE role_id = ? ORDER BY full_name";
+// public List<User> getVolunteers() {
+// List<User> volunteers = new ArrayList<>();
+// String sql = "SELECT user_id, full_name, username FROM users WHERE role_id =
+// ? ORDER BY full_name";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, 2L);
+// try (Connection conn = DBUtil.getConnection();
+// PreparedStatement ps = conn.prepareStatement(sql)) {
+// ps.setLong(1, 2L);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    User u = new User();
-                    u.setUserId(rs.getInt("user_id"));
-                    u.setFullName(rs.getString("full_name"));
-                    u.setUsername(rs.getString("username"));
-                    u.setRoleId(2L);
-                    volunteers.add(u);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return volunteers;
-    }
+// try (ResultSet rs = ps.executeQuery()) {
+// while (rs.next()) {
+// User u = new User();
+// u.setUserId(rs.getInt("user_id"));
+// u.setFullName(rs.getString("full_name"));
+// u.setUsername(rs.getString("username"));
+// u.setRoleId(2L);
+// volunteers.add(u);
+// }
+// }
+// } catch (SQLException e) {
+// e.printStackTrace();
+// }
+// return volunteers;
+// }
 
-    public void postAnnouncement(Announcement ann) throws SQLException {
-        String sql = "INSERT INTO announcements (title, content, event_date, location, posted_by) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, ann.getTitle());
-            ps.setString(2, ann.getContent());
-            ps.setDate(3, ann.getEventDate());
-            ps.setString(4, ann.getLocation());
-            ps.setLong(5, ann.getPostedBy());
-            ps.executeUpdate();
-        }
-    }
-}
+// public void postAnnouncement(Announcement ann) throws SQLException {
+// String sql = "INSERT INTO announcements (title, content, event_date,
+// location, posted_by) VALUES (?, ?, ?, ?, ?)";
+// try (Connection conn = DBUtil.getConnection();
+// PreparedStatement ps = conn.prepareStatement(sql)) {
+// ps.setString(1, ann.getTitle());
+// ps.setString(2, ann.getContent());
+// ps.setDate(3, ann.getEventDate());
+// ps.setString(4, ann.getLocation());
+// ps.setLong(5, ann.getPostedBy());
+// ps.executeUpdate();
+// }
+// }
+// }
