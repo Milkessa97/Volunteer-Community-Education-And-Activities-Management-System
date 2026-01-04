@@ -8,12 +8,10 @@ import java.util.List;
 
 public class StudentDAO {
 
-    /**
-     * Retrieves all lectures that are APPROVED.
-     */
+
     public List<Lecture> getAvailableLectures() {
         List<Lecture> lectures = new ArrayList<>();
-        // Joins with users to get the Volunteer/Instructor name
+
         String sql = "SELECT l.*, u.full_name AS instructor_name " +
                 "FROM lectures l " +
                 "JOIN users u ON l.volunteer_id = u.user_id " +
@@ -32,9 +30,7 @@ public class StudentDAO {
         return lectures;
     }
 
-    /**
-     * Registers a student for a lecture.
-     */
+
     public boolean registerForLecture(int studentId, int lectureId) {
         String sql = "INSERT INTO lecture_registrations (student_id, lecture_id) VALUES (?, ?)";
 
@@ -46,7 +42,7 @@ public class StudentDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            // Check for duplicate registration (Unique Constraint in SQL)
+
             if (e.getErrorCode() == 1062) {
                 System.out.println("Student already registered for this lecture.");
             }
@@ -55,9 +51,7 @@ public class StudentDAO {
         }
     }
 
-    /**
-     * Fetches only the lectures a specific student has signed up for.
-     */
+
     public List<Lecture> getStudentRegistrations(int studentId) {
         List<Lecture> myLectures = new ArrayList<>();
         String sql = "SELECT l.*, u.full_name AS instructor_name " +
@@ -81,9 +75,7 @@ public class StudentDAO {
         return myLectures;
     }
 
-    /**
-     *Counts upcoming lectures for the dashboard cards.
-     */
+
     public int countUpcomingForStudent(int studentId) {
         String sql = "SELECT COUNT(*) FROM lecture_registrations lr " +
                 "JOIN lectures l ON lr.lecture_id = l.lecture_id " +
@@ -100,9 +92,7 @@ public class StudentDAO {
         return 0;
     }
 
-    /**
-     *Counts completed lectures for the dashboard cards.
-     */
+
     public int countCompletedForStudent(int studentId) {
         String sql = "SELECT COUNT(*) FROM lecture_registrations lr " +
                 "JOIN lectures l ON lr.lecture_id = l.lecture_id " +
@@ -119,10 +109,7 @@ public class StudentDAO {
         return 0;
     }
 
-    /**
-     * Checks if a student is already registered for a specific lecture.
-     * Used to show "Registered" vs "Register Now" button.
-     */
+
     public boolean isStudentRegistered(int studentId, int lectureId) {
         String sql = "SELECT COUNT(*) FROM lecture_registrations WHERE student_id = ? AND lecture_id = ?";
         try (Connection conn = DBUtil.getConnection();
@@ -151,8 +138,7 @@ public class StudentDAO {
         l.setVolunteerId(rs.getLong("volunteer_id"));
         l.setStatus(rs.getString("status"));
 
-        // This maps 'instructor_name' from the SQL JOIN to the Lecture model
-        // method
+
         try {
             l.setInstructor(rs.getString("instructor_name"));
         } catch (SQLException e) {
