@@ -6,7 +6,6 @@ import java.sql.*;
 
 public class UserDAO {
 
-    // Helper method to get the connection from your new DBUtil
     private Connection getConnection() throws SQLException {
         return DBUtil.getConnection();
     }
@@ -14,7 +13,7 @@ public class UserDAO {
     public User findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
 
-        // Use try-with-resources to ensure connection closes
+
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 

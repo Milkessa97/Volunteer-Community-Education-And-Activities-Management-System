@@ -18,9 +18,7 @@ public class VolunteerServlet extends HttpServlet {
         volunteerDAO = new VolunteerDAO();
     }
 
-    /**
-     * Security check: Ensures user is logged in and has the 'Volunteer' role.
-     */
+
     private User getAuthenticatedVolunteer(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null)
