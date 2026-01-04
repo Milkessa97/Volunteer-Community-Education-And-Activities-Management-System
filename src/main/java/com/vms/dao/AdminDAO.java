@@ -12,10 +12,8 @@ public class AdminDAO {
         Connection conn = null;
         try {
             conn = DBUtil.getConnection();
-            // Start transaction
             conn.setAutoCommit(false);
 
-            // 1. Insert into registrations
             String insertSql = "INSERT INTO event_registrations (event_id, user_id, registration_status) VALUES (?, ?, 'CONFIRMED')";
             try (PreparedStatement psInsert = conn.prepareStatement(insertSql)) {
                 psInsert.setLong(1, eventId);
@@ -23,14 +21,12 @@ public class AdminDAO {
                 psInsert.executeUpdate();
             }
 
-            // 2. Delete from waitlist
             String deleteSql = "DELETE FROM event_waitlist WHERE waitlist_id = ?";
             try (PreparedStatement psDelete = conn.prepareStatement(deleteSql)) {
                 psDelete.setLong(1, waitlistId);
                 psDelete.executeUpdate();
             }
 
-            // Commit both changes
             conn.commit();
         } catch (SQLException e) {
             if (conn != null)
@@ -43,11 +39,9 @@ public class AdminDAO {
             }
         }
     }
-    // --- EVENT MANAGEMENT ---
 
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        // Join with users to get the name of the creator
         String sql = "SELECT e.*, u.full_name FROM events e " +
                 "JOIN users u ON e.created_by = u.user_id " +
                 "ORDER BY e.event_date DESC";
@@ -66,8 +60,6 @@ public class AdminDAO {
                 e.setCapacity(rs.getInt("capacity"));
                 e.setStatus(rs.getString("status"));
                 e.setCreatedBy(rs.getInt("created_by"));
-                // If you added a 'creatorName' field to your Event model:
-                // e.setCreatorName(rs.getString("full_name"));
                 events.add(e);
             }
         } catch (SQLException e) {
@@ -91,7 +83,6 @@ public class AdminDAO {
                     ew.setEventId(rs.getInt("event_id"));
                     ew.setUserId(rs.getInt("user_id"));
                     ew.setPosition(rs.getInt("position"));
-                    // You can add a 'userName' field to your EventWaitlist model to show names
                     list.add(ew);
                 }
             }
@@ -100,7 +91,6 @@ public class AdminDAO {
         }
         return list;
     }
-    // --- DASHBOARD METHODS ---
 
     public int countUpcomingLectures() {
         String sql = "SELECT COUNT(*) FROM lectures WHERE status = 'pending'";
@@ -115,11 +105,6 @@ public class AdminDAO {
         return 0;
     }
 
-    // --- NEW DASHBOARD METRICS ---
-
-    /**
-     * Counts lectures that occurred in the past.
-     */
     public int countCompletedSessions() {
         String sql = "SELECT COUNT(*) FROM lectures WHERE status = 'approved'";
         try (Connection conn = DBUtil.getConnection();
@@ -133,9 +118,6 @@ public class AdminDAO {
         return 0;
     }
 
-    /**
-     * Counts total volunteer registrations across all lectures.
-     */
     public int countTotalAttendees() {
         String sql = "SELECT COUNT(*) FROM lecture_registrations";
         try (Connection conn = DBUtil.getConnection();
@@ -149,9 +131,6 @@ public class AdminDAO {
         return 0;
     }
 
-    /**
-     * Calculates the average number of volunteers per lecture.
-     */
     public double getAverageAttendeesPerLecture() {
         String sql = "SELECT AVG(attendee_count) FROM (" +
                 "  SELECT COUNT(registration_id) as attendee_count " +
@@ -170,7 +149,6 @@ public class AdminDAO {
     }
 
     public Lecture getMostPopularLecture() {
-        // Joins lectures with registrations to find the one with the most students
         String sql = "SELECT l.title, u.full_name as instructor_name " +
                 "FROM lectures l " +
                 "JOIN users u ON l.volunteer_id = u.user_id " +
@@ -192,8 +170,6 @@ public class AdminDAO {
         return null;
     }
 
-    // --- USER MANAGEMENT ---
-
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT u.*, r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id";
@@ -206,8 +182,6 @@ public class AdminDAO {
                 u.setFullName(rs.getString("full_name"));
                 u.setUsername(rs.getString("username"));
                 u.setRoleId(rs.getLong("role_id"));
-                // If your User model has a roleName field:
-                // u.setRoleName(rs.getString("role_name"));
                 users.add(u);
             }
         } catch (SQLException e) {
@@ -216,12 +190,8 @@ public class AdminDAO {
         return users;
     }
 
-    // --- LECTURE MANAGEMENT ---
-
     public List<Lecture> getAllLectures() {
         List<Lecture> lectures = new ArrayList<>();
-
-        // Using LEFT JOIN so lectures without an assigned volunteer still appear
         String sql = "SELECT l.lecture_id, l.title, l.description, l.lecture_date, " +
                 "l.start_time, l.end_time, l.location, l.status, " +
                 "u.full_name as instructor_name " +
@@ -235,29 +205,18 @@ public class AdminDAO {
 
             while (rs.next()) {
                 Lecture l = new Lecture();
-
-                // Primary Data
                 l.setLectureId(rs.getLong("lecture_id"));
                 l.setTitle(rs.getString("title"));
                 l.setDescription(rs.getString("description"));
                 l.setLectureDate(rs.getDate("lecture_date"));
-
-                // Schedule Data (Make sure these setters exist in your Lecture.java)
                 l.setStartTime(rs.getTime("start_time"));
                 l.setEndTime(rs.getTime("end_time"));
-
-                // Metadata
                 l.setLocation(rs.getString("location"));
                 l.setStatus(rs.getString("status"));
-
-                // Instructor Data from the JOIN
-                // If instructor_name is NULL (due to LEFT JOIN), it safely sets to null
                 l.setInstructor(rs.getString("instructor_name"));
 
                 lectures.add(l);
             }
-
-            // Debugging line - check your console/logs to see if this is 0
             System.out.println("DEBUG: Retrieved " + lectures.size() + " lectures from database.");
 
         } catch (SQLException e) {
@@ -267,12 +226,6 @@ public class AdminDAO {
         return lectures;
     }
 
-    /**
-     * Deletes a lecture from the database.
-     * Due to our schema constraints, this will work if no students
-     * are registered yet. If students are registered, you might need to
-     * delete registrations first or use ON DELETE CASCADE.
-     */
     public boolean deleteLecture(long lectureId) throws SQLException {
         String sql = "DELETE FROM lectures WHERE lecture_id = ?";
         try (Connection conn = DBUtil.getConnection();
@@ -282,9 +235,6 @@ public class AdminDAO {
         }
     }
 
-    /**
-     * Fetches a single lecture by ID (needed for the Edit page).
-     */
     public Lecture getLectureById(long id) {
         String sql = "SELECT l.*, u.full_name as instructor_name " +
                 "FROM lectures l " +
@@ -342,8 +292,6 @@ public class AdminDAO {
         }
     }
 
-    // --- EVENT MANAGEMENT ---
-
     public void createEvent(Event event) throws SQLException {
         String sql = "INSERT INTO events (title, description, event_date, start_time, end_time, location, capacity, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
@@ -361,10 +309,6 @@ public class AdminDAO {
         }
     }
 
-    /**
-     * Creates a new lecture in the database.
-     * Sets initial status to 'PENDING' for admin approval.
-     */
     public void createLecture(Lecture lecture) throws SQLException {
         String sql = "INSERT INTO lectures (title, description, lecture_date, start_time, location, volunteer_id, status) "
                 +
@@ -381,20 +325,14 @@ public class AdminDAO {
         }
     }
 
-    /**
-     * Fetches all users with the Volunteer role (role_id = 2).
-     * Used for populating the volunteer dropdown in create lecture form.
-     */
     public List<User> getVolunteers() {
         List<User> volunteers = new ArrayList<>();
         String sql = "SELECT user_id, full_name, username FROM users WHERE role_id = ? ORDER BY full_name";
 
         try (Connection conn = DBUtil.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            // Explicitly set as a Long to match BIGINT
-            ps.setLong(1, 2L); 
-            
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, 2L);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
@@ -410,8 +348,6 @@ public class AdminDAO {
         }
         return volunteers;
     }
-
-    // --- ANNOUNCEMENTS ---
 
     public void postAnnouncement(Announcement ann) throws SQLException {
         String sql = "INSERT INTO announcements (title, content, event_date, location, posted_by) VALUES (?, ?, ?, ?, ?)";
