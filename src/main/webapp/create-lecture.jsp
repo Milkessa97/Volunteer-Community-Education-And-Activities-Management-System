@@ -120,7 +120,7 @@
                                     class="flex h-11 w-full rounded-md border border-slate-200 bg-slate-100 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
                             </div>
 
-                            <div class="flex items-center gap-4 pt-6">
+                            <!-- <div class="flex items-center gap-4 pt-6">
                                 <button type="submit"
                                     class="flex-1 inline-flex items-center justify-center rounded-md bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500">
                                     Create Lecture
@@ -129,7 +129,7 @@
                                     class="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-8 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors">
                                     Cancel
                                 </a>
-                            </div>
+                            </div> -->
                         </form>
                     </div>
                 </div>
